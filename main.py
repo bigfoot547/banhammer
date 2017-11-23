@@ -4,22 +4,34 @@ import datetime
 import time
 import threading
 import re
+from config import *
 
-channels = []
-botnick = 'banhammer'
-botowner = 'bigfoot'
+conf = Config('bot.conf')
 
-OPMODE = "oper"
-OPERLOGIN = "bigfootbot"
-OPERPASS = "password"
+botnick = conf.get_string('nick', require=True)
+botowner = conf.get_string('botowner', require=True)
+
+OPMODE = conf.get_enum('opmode', ['oper', 'services'])
+if not OPMODE:
+	OPMODE = "services"
+
+OPERLOGIN = conf.get_string('operuname', require=(OPMODE == 'oper'))
+OPERPASS = conf.get_string('operpass', require=(OPMODE == 'oper'))
 
 # Modes
-UMODE_CALLERID = 'g'
+UMODE_CALLERID = conf.get_string('umode_cid')
 
 # InspIRCd-like modes
-UMODE_DEAF = 'd'
-MUTEPREFIX = 'b m:'
-UMODE_BLOCKREDIR = 'L'
+UMODE_DEAF = conf.get_string('umode_deaf')
+MUTEPREFIX = conf.get_string('muteprefix')
+UMODE_BLOCKREDIR = conf.get_string('umode_blockredir')
+
+if UMODE_DEAF == None:
+	UMODE_DEAF = 'd'
+if MUTEPREFIX == None:
+	MUTEPREFIX = 'b '
+if UMODE_BLOCKREDIR == None:
+	UMODE_BLOCKREDIR = ''
 
 # Charybdis (or ircd-seven)-like modes
 # UMODE_DEAF = 'D'
@@ -76,7 +88,6 @@ class BanThread(threading.Thread):
 
 	def run(self):
 		while self.client.running:
-			self.client.cm.write_channels(silent=True)
 			for channel in self.client.cm.channels:
 				for ban in channel.bans:
 					if ban.is_expired():
@@ -754,7 +765,7 @@ class BanBot(pydle.Client):
 try:
 	client = BanBot(botnick)
 	client.sasl_username = "bigfoot-bots"
-	client.sasl_password = "password"
+	client.sasl_password = "DaBanz"
 	client.connect('server.bigfootslair.net', tls=True)
 	client.handle_forever()
 except KeyboardInterrupt:
@@ -763,7 +774,7 @@ except KeyboardInterrupt:
 	print("The client is disconnected, please wait for the threads to join")
 
 	raise SystemExit(0)
-except ServerError as s:
+except pydle.ServerError as s:
 	print("A socket exeption occurred: {} {}".format(type(s), str(s)))
 	raise SystemExit(1)
 except BaseException as e:
