@@ -24,10 +24,9 @@ if not OPMODE:
 OPERLOGIN = conf.get_string('operuname', require=(OPMODE == 'oper'))
 OPERPASS = conf.get_string('operpass', require=(OPMODE == 'oper'))
 
-# Modes
+# Modes / features
 UMODE_CALLERID = conf.get_string('umode_cid')
 
-# InspIRCd-like modes
 UMODE_DEAF = conf.get_string('umode_deaf')
 MUTEPREFIX = conf.get_string('muteprefix')
 UMODE_BLOCKREDIR = conf.get_string('umode_blockredir')
@@ -39,13 +38,8 @@ if MUTEPREFIX == None:
 if UMODE_BLOCKREDIR == None:
 	UMODE_BLOCKREDIR = ''
 
-# Charybdis (or ircd-seven)-like modes
-# UMODE_DEAF = 'D'
-# MUTEPREFIX = 'q '
-# UMODE_BLOCKREDIR = ''
-
 def ts_to_hr(ts):
-	return datetime.datetime.fromtimestamp(ts).strftime("%a, %b %d %Y at %I:%M:%S %p")
+	return datetime.datetime.fromtimestamp(ts).strftime("%a, %b %d %Y at %I:%M:%S %p %z")
 
 # This class written by #python @ freenode
 class Duration:
