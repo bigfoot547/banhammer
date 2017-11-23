@@ -11,6 +11,12 @@ conf = Config('bot.conf')
 botnick = conf.get_string('nick', require=True)
 botowner = conf.get_string('botowner', require=True)
 
+sasl_uname = conf.get_string('sasl_username')
+sasl_pass = conf.get_string('sasl_password', require=(sasl_uname != None))
+server = conf.get_string('server', require=True)
+port = conf.get_int('port')
+tls = conf.get_bool('tls')
+
 OPMODE = conf.get_enum('opmode', ['oper', 'services'])
 if not OPMODE:
 	OPMODE = "services"
@@ -764,9 +770,9 @@ class BanBot(pydle.Client):
 
 try:
 	client = BanBot(botnick)
-	client.sasl_username = "bigfoot-bots"
-	client.sasl_password = "DaBanz"
-	client.connect('server.bigfootslair.net', tls=True)
+	client.sasl_username = sasl_uname
+	client.sasl_password = sasl_pass
+	client.connect(server, tls=tls, port=port)
 	client.handle_forever()
 except KeyboardInterrupt:
 	print("^C pressed, exiting")
