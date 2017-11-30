@@ -135,8 +135,7 @@ class Ban:
 			else:
 				self.client.rawmsg("MODE", self.channel.name, '+b', self.mask_or_nick)
 				self.client.notice(self.channel.name, "Mask {} has been banned.".format(self.mask_or_nick))
-			if not info['hostname'] in self.banned_masks:
-				self.banned_masks.append(info['hostname'])
+			self.banned_masks.append(info['hostname'])
 		else:
 			info = yield self.client.whois(self.mask_or_nick.lower())
 			if not info:
