@@ -156,11 +156,18 @@ class Ban:
 				self.banned_masks.append(info['hostname'])
 
 	def unset(self, silent=False):
-		for b in self.banned_masks:
+		if self.is_mask:
+			b = self.banned_masks[0]
 			if self.mute:
-				self.client.rawmsg("MODE", self.channel.name, '-' + (MUTEPREFIX + b).split(' ')[0], (MUTEPREFIX + '*!*@' + b).split(' ')[1])
+				self.client.rawmsg("MODE", self.channel.name, '-' + (MUTEPREFIX + b).split(' ')[0], (MUTEPREFIX + b).split(' ')[1])
 			else:
-				self.client.rawmsg("MODE", self.channel.name, '-b', '*!*@' + b)
+				self.client.rawmsg("MODE", self.channel.name, '-b', b)
+		else:
+			for b in self.banned_masks:
+				if self.mute:
+					self.client.rawmsg("MODE", self.channel.name, '-' + (MUTEPREFIX + b).split(' ')[0], (MUTEPREFIX + '*!*@' + b).split(' ')[1])
+				else:
+					self.client.rawmsg("MODE", self.channel.name, '-b', '*!*@' + b)
 		if not silent:
 			self.client.notice(self.channel.name, "Unset ban on {}.".format(self.mask_or_nick))
 
