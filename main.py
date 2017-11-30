@@ -110,10 +110,10 @@ class Ban:
 		self.banned_masks = []
 
 	def is_hostmask(self):
-		if self.mask_or_nick.find('!') == -1 and self.mask_or_nick.find('@') == -1:
-			return False
-		else:
+		if (self.mask_or_nick.find('!') != -1 and self.mask_or_nick.find('@') != -1) or self.mask_or_nick.find(':') != -1:
 			return True
+		else:
+			return False
 
 	def is_expired(self):
 		if self.duration == -1:
